@@ -17,7 +17,7 @@ messages = []
 def send_msg(role, text):
     try:
         data = {"role": role, "text": text}
-        response = requests.post("http://127.0.0.1:8000/send_message", json=data)
+        response = requests.post("http://127.0.0.1:8000/send_message", json=data, timeout=60)
         if response.status_code == 200:
             print("Message sent successfully!")
         else:
