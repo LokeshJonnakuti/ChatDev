@@ -13,6 +13,7 @@ from chatdev.codes import Codes
 from chatdev.documents import Documents
 from chatdev.roster import Roster
 from chatdev.utils import log_and_print_online
+from security import safe_command
 
 
 class ChatEnvConfig:
@@ -57,7 +58,7 @@ class ChatEnv:
         if "ModuleNotFoundError" in test_reports:
             for match in re.finditer(r"No module named '(\S+)'", test_reports, re.DOTALL):
                 module = match.group(1)
-                subprocess.Popen("pip install {}".format(module), shell=True).wait()
+                safe_command.run(subprocess.Popen, "pip install {}".format(module), shell=True).wait()
                 log_and_print_online("**[CMD Execute]**\n\n[CMD] pip install {}".format(module))
 
     def set_directory(self, directory):
@@ -85,7 +86,7 @@ class ChatEnv:
         success_info = "The software run successfully without errors."
         try:
             command = "cd {}; ls -l; python3 main.py;".format(directory)
-            process = subprocess.Popen(command, shell=True, preexec_fn=os.setsid,
+            process = safe_command.run(subprocess.Popen, command, shell=True, preexec_fn=os.setsid,
                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             time.sleep(3)
             return_code = process.returncode
